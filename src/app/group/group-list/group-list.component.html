@@ -1,0 +1,9 @@
+<div class="container">
+  <label>
+    <input type="text" class="searchGroup">
+  </label>
+  <button routerLink="newGroup" class="btn btn-dark">Add Group</button>
+  <ul class="groupList">
+    <li *ngFor="let group of groupList ">{{group.name}}</li>
+  </ul>
+</div>

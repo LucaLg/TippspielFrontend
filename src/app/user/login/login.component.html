@@ -1,0 +1,14 @@
+<form  [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3 form-floating">
+
+    <input class="form-control" id="username" type="text" formControlName="username" placeholder="Username">
+    <label for="username" >Username:</label>
+    <span class="error" *ngIf="loginForm.get('username').touched && loginForm.get('username').invalid">Username muss langer als 4 Zeichen sein!</span>
+  </div>
+  <div class="mb-3 form-floating">
+    <input id="password" class="form-control" type="password" formControlName="password" placeholder="Password">
+    <label for="password"  >Password:</label>
+    <span class="error" *ngIf="loginForm.get('password').touched && loginForm.get('password').invalid">Das Password muss mindestens 8 zeichen lang sein!</span>
+  </div>
+  <button class="btn btn-dark" type="submit" [disabled]="!loginForm.valid">Login</button>
+</form>
