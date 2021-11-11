@@ -1,34 +1,24 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand">TP</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link "  routerLink="/tip">Tip</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="group">Groups</a>
-        </li>
 
-      </ul>
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="profile">Profile</a>
-        </li>
-        <li class="nav-item" *ngIf="!tokenService.hasToken">
-          <a class="nav-link" routerLink="register">Register</a>
-        </li>
-        <li class="nav-item" *ngIf="!tokenService.hasToken">
-          <a class="nav-link" routerLink="login">Login</a>
-        </li>
-        <li class="nav-item" *ngIf="tokenService.hasToken">
-          <a class="nav-link" (click)="logout()" routerLink="tip">Logout</a>
-        </li>
+<div class="container sidenav">
 
-      </ul>
-    </div>
-  </div>
-</nav>
+  <mat-nav-list>
+    <mat-list-item class="sidenav-brand" routerLink="tip">
+    <h1>TP</h1>
+    </mat-list-item>
+    <mat-list-item routerLink="tip">
+      <a ><mat-icon>post_add</mat-icon></a>
+    </mat-list-item>
+    <mat-list-item routerLink="points">
+      <a ><mat-icon>table_chart</mat-icon></a>
+    </mat-list-item>
+    <mat-list-item  routerLink="group">
+      <a><mat-icon>groups</mat-icon></a>
+    </mat-list-item>
+    <mat-list-item routerLink="login"*ngIf="this.tokenService.hasToken">
+      <a><mat-icon>login</mat-icon></a>
+    </mat-list-item>
+    <mat-list-item *ngIf="!this.tokenService.hasToken">
+      <a><mat-icon>logout</mat-icon></a>
+    </mat-list-item>
+  </mat-nav-list>
+</div>

@@ -1,7 +1,22 @@
-form{
-  width: 30%;
-  margin: 5em auto;
+form {
+  display: flex;
+  flex-direction: column;
 }
-.error{
+.error {
   color: red;
+}
+mat-form-field {
+  width: 20em;
+}
+button {
+  margin-right: 1em;
+  width: 6em;
+}
+.container {
+  margin-left: auto;
+  width: 65%;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BackendUserService} from './backend-user.service';
 import {HttpClient} from '@angular/common/http';
-import {Tip} from '../model/Tip';
+import {ITip} from '../model/ITip';
 import {URL} from '../../environments/environment';
 
 @Injectable({
@@ -10,10 +10,11 @@ import {URL} from '../../environments/environment';
 export class TipService {
 
   constructor(private userBackendService:BackendUserService,private http:HttpClient) { }
-  saveTips(tips:Tip[]){
+  saveTips(tips:ITip[]){
     if(tips !=null && this.userBackendService.loggedInUser != null){
-      return  this.http.post<Tip[]>(URL + "/tips/" + this.userBackendService.loggedInUser + "/saveTips",tips).subscribe(res=>{
-         console.log(res);
+      return  this.http.post<ITip[]>(URL + "/tips/" + this.userBackendService.loggedInUser + "/saveTips",tips).subscribe(res=>{
+          console.log('Gespeichert');
+          console.log(res);
       });
     }else{
       alert("Du muss eingeloggt sein um tippen zu können!");
@@ -21,10 +22,21 @@ export class TipService {
   }
   getTipsByUsername(){
 
-    return this.http.get<Tip[]>(URL+'/tips/'+this.userBackendService.loggedInUser);
+    return this.http.get<ITip[]>(URL+'/tips/'+this.userBackendService.loggedInUser);
 
   }
   getTipByMatchIdAndUsername(matchId:number){
-    return this.http.get<Tip>(URL + '/tips/'+matchId+'/'+this.userBackendService.loggedInUser);
+    return this.http.get<ITip>(URL + '/tips/'+matchId+'/'+this.userBackendService.loggedInUser);
+  }
+  getTipsByMatchWeek(matchweekId:number,){
+    return this.http.get<ITip[]>(URL +'/tips/matchweek/'+this.userBackendService.loggedInUser+'/'+matchweekId);
+  }
+  getLastTips(username:String){
+    return this.http.get<ITip[]>(URL +'/tips/'+username);
+  }
+  updateTip(tip:ITip,username:string){
+    return this.http.put(URL + '/tips/' + username ,tip).subscribe(res=>{
+      console.log(res);
+    });
   }
 }

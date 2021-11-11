@@ -13,10 +13,12 @@ export class NavComponent implements OnInit {
   constructor(public tokenService:TokenService,private userBackendService:BackendUserService,private router:Router) { }
 
   ngOnInit(): void {
+
   }
   logout(){
     this.userBackendService.loggedInUser = null;
     this.tokenService.deleteToken();
     this.router.navigate(["/tip"]);
   }
+
 }

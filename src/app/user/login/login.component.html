@@ -1,14 +1,21 @@
-<form  [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <div class="mb-3 form-floating">
+<div class="container">
+<h2>Login:</h2>
+<form [formGroup]="loginForm" >
 
-    <input class="form-control" id="username" type="text" formControlName="username" placeholder="Username">
-    <label for="username" >Username:</label>
-    <span class="error" *ngIf="loginForm.get('username').touched && loginForm.get('username').invalid">Username muss langer als 4 Zeichen sein!</span>
+  <mat-form-field color="primary" appearance="fill">
+    <mat-label>Enter your Username</mat-label>
+    <input matInput id="username" type="text" formControlName="username" placeholder="Username">
+    <mat-error *ngIf="loginForm.get('username').touched && loginForm.get('username').invalid">Username muss langer als 4 Zeichen sein!</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Enter Password</mat-label>
+    <input matInput id="password" type="password" formControlName="password" placeholder="Password">
+    <mat-error *ngIf="loginForm.get('password').touched && loginForm.get('password').invalid">Das Password muss mindestens 8 zeichen lang sein!</mat-error>
+  </mat-form-field>
+  <div class="buttons">
+  <button  mat-raised-button color="accent" type="button" (click)="onLogin()" [disabled]="!loginForm.valid">Login</button>
+  <button  mat-raised-button color="accent" type="button" (click)="onRegister()" [disabled]="!loginForm.valid">Register</button>
   </div>
-  <div class="mb-3 form-floating">
-    <input id="password" class="form-control" type="password" formControlName="password" placeholder="Password">
-    <label for="password"  >Password:</label>
-    <span class="error" *ngIf="loginForm.get('password').touched && loginForm.get('password').invalid">Das Password muss mindestens 8 zeichen lang sein!</span>
-  </div>
-  <button class="btn btn-dark" type="submit" [disabled]="!loginForm.valid">Login</button>
 </form>
+</div>

@@ -1,18 +1,21 @@
 <div class="cont">
-  <div class="tip-container" *ngFor="let tip of tips;index as i">
+  <div color="primary" class="tip-container" *ngFor="let tip of tips;index as i">
 
       <div class="name">
         {{tip.team1.shortName}}
-        <img src="{{tip.team1.teamIconUrl}}" alt="">
+
+      </div>
+      <img src="{{tip.team1.teamIconUrl}}" alt="">
+      <input type="number"  class="prediction" [(ngModel)]="tip.tipHomeScore" >
+      <input type="number" class="prediction" [(ngModel)]="tip.tipAwayScore">
+      <img src="{{tip.team2.teamIconUrl}}" alt="">
+      <div class="name">
+        {{tip.team2.shortName}}
+
       </div>
 
-      <input type="number" [(ngModel)]="tip.tipHomeScore" class="prediction" >
-      <input type="number" [(ngModel)]="tip.tipAwayScore" class="prediction" >
-
-      <div class="name">{{tip.team2.shortName}}
-        <img src="{{tip.team2.teamIconUrl}}" alt="">
-      </div>
 
   </div>
+  <button mat-raised-button color="primary" (click)="save()">Speichern</button>
 </div>
-<button class="btn btn-dark"  (click)="save()">Speichern</button>
+

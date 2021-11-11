@@ -1,13 +1,17 @@
 import {Fixture} from './Fixture';
 import {Team} from './Team';
 
-export class Tip {
+export interface ITip {
 
   tipHomeScore:number;
   tipAwayScore:number;
   matchId:number;
   team1:Team;
   team2:Team;
+  hometeam:string,
+  awayteam:string,
+  user:String;
+  matchDayID:number;
   id?:number;
   actHomeScore?:number;
   actAwayScore?:number;

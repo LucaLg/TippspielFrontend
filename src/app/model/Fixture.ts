@@ -1,11 +1,13 @@
 import {Team} from './Team';
+import {MatchResult} from './MatchResult';
+import {IMatchweek} from './IMatchweek';
 
 export class Fixture{
    matchID:number;
-  // spieltag:string;
-
    team1:Team;
    team2:Team;
-   homescore?:number;
-   awayscore?:number;
+   matchResults:MatchResult[];
+   group:IMatchweek;
+   pointsTeam1?:number;
+   pointsTeam2?:number;
 }

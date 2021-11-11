@@ -1,10 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Fixture} from '../../model/Fixture';
-import {Tip} from '../../model/Tip';
+import {ITip} from '../../model/ITip';
 
 import {ApiService} from '../../service/api.service';
 import {BackendUserService} from '../../service/backend-user.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TipService} from '../../service/tip.service';
 
 @Component({
@@ -15,7 +14,7 @@ import {TipService} from '../../service/tip.service';
 export class TipComponent implements OnInit {
   allTipsTipped = false;
   fixtures: Fixture[];
-  tips: Tip[] = [];
+  tips: ITip[] = [];
   username: string;
   constructor(private apiService: ApiService, private userBackendService: BackendUserService, private tipService: TipService) {
 
@@ -26,18 +25,29 @@ export class TipComponent implements OnInit {
     console.log(this.username);
     this.apiService.getCurrentMatchweek().subscribe(res => {
 
+
       res.forEach(res => {
-        let newTip: Tip = {
+
+        let newTip: ITip = {
           matchId: res.matchID,
           team1: res.team1,
           team2: res.team2,
           tipHomeScore: null,
-          tipAwayScore: null
+          tipAwayScore: null,
+          user: this.userBackendService.loggedInUser,
+          matchDayID: res.group.groupID,
+          actAwayScore: -1,
+          actHomeScore:-1,
+          hometeam:res.team1.shortName,
+          awayteam:res.team2.shortName
         };
+
         this.tips.push(newTip);
       });
       this.initTips();
     });
+
+
   }
 
   initTips() {
@@ -70,7 +80,7 @@ export class TipComponent implements OnInit {
       alert('Tippe alle Spiele');
       return;
     }
-    console.log(this.tips);
+
     this.tipService.saveTips(this.tips);
   }
 }
