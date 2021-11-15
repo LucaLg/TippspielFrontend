@@ -24,7 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserButtonComponent } from './nav/user-button/user-button.component';
-
+import { JwtModule } from '@auth0/angular-jwt';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'tip', component: TipComponent },
@@ -39,6 +39,9 @@ const routes: Routes = [
   },
   { path: '**', redirectTo: '/tip' },
 ];
+export function tokenGetter() {
+  return localStorage.getItem('Access_Token');
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,6 +68,12 @@ const routes: Routes = [
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['http://localhost/8080'],
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],

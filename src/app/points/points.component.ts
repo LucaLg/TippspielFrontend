@@ -4,6 +4,7 @@ import { BackendUserService } from '../service/backend-user.service';
 import { ApiService } from '../service/api.service';
 import { ITip } from '../model/ITip';
 import { ActivatedRoute } from '@angular/router';
+import { TouchSequence } from 'selenium-webdriver';
 
 @Component({
   selector: 'app-points',
@@ -23,6 +24,10 @@ export class PointsComponent implements OnInit {
   changed: boolean = false;
   loaded: boolean = false;
   sumPoints: number = 0;
+  indexTips = 0;
+  displayedTips: ITip[] = [];
+  noTipsToDisplay: boolean = false;
+  matchWeeksTipped: number[] = [];
   constructor(
     private route: ActivatedRoute,
     private tipService: TipService,
@@ -31,45 +36,64 @@ export class PointsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.tipService.getAllMatchweeks().subscribe((matchweeks) => {
+      this.matchWeeksTipped = matchweeks;
+      console.log(this.matchWeeksTipped);
+    });
     this.apiService.getCurrentMatchweekID().subscribe((res) => {
       this.currentGroupId = res.GroupID;
-      this.getLastTips();
+
+      this.getLastTips(this.matchWeeksTipped[this.indexTips]);
     });
   }
 
-  getLastTips() {
-    this.tipService
-      .getLastTips(this.userBackendService.loggedInUser)
-      .subscribe((res) => {
-        res.forEach((value) => {
-          this.currentGroupId == value.matchDayID
-            ? this.lastTips.push(value)
-            : console.log('No');
-
-          this.checkPoints(this.lastTips[this.lastTips.length - 1]);
+  getLastTips(matchweek: number) {
+    this.tipService.getTipsByMatchWeek(matchweek).subscribe(
+      (res) => {
+        if (res.length === 0) {
+          this.noTipsToDisplay = true;
+        }
+        this.lastTips = res;
+        this.lastTips.forEach((value) => {
+          this.noTipsToDisplay = false;
+          this.checkPoints(value);
         });
-
+        console.log('Ausgeführt' + matchweek);
+        // console.log(this.lastTips);
         this.loaded = true;
-      });
+      },
+      (error) => {
+        console.log(error);
+        this.noTipsToDisplay = true;
+      }
+    );
   }
 
   checkPoints(tip: ITip) {
-    this.apiService.getScoreOfMatchID(tip.matchId).subscribe((res) => {
-      tip.actHomeScore = res.matchResults[0].pointsTeam1;
-      tip.actAwayScore = res.matchResults[0].pointsTeam2;
+    this.apiService.getScoreOfMatchID(tip.matchId).subscribe(
+      (res) => {
+        if (res.matchIsFinished) {
+          tip.actHomeScore = res.matchResults[0].pointsTeam1;
+          tip.actAwayScore = res.matchResults[0].pointsTeam2;
 
-      tip.points = this.calcPoints(tip);
+          tip.points = this.calcPoints(tip);
 
-      this.sumPoints = this.sumPoints + tip.points;
+          this.sumPoints = this.sumPoints + tip.points;
 
-      this.tipService.updateTip(tip, this.userBackendService.loggedInUser);
-      //console.log(tip.matchId + ' ' + tip.actHomeScore + ' ' + tip.actAwayScore);
-    });
+          this.tipService.updateTip(tip, this.userBackendService.loggedInUser);
+        } else {
+          tip.actAwayScore = '-';
+          tip.actHomeScore = '-';
+        }
+        //console.log(tip.matchId + ' ' + tip.actHomeScore + ' ' + tip.actAwayScore);
+      },
+      (errpr) => {}
+    );
   }
 
   calcPoints(tip: ITip): number {
     let diffTip: number = tip.tipAwayScore - tip.tipHomeScore;
-    let diffAct: number = tip.actAwayScore - tip.actHomeScore;
+    let diffAct: number = +tip.actAwayScore - +tip.actHomeScore;
     if (
       tip.actAwayScore == tip.tipAwayScore &&
       tip.actHomeScore == tip.tipAwayScore
@@ -82,5 +106,13 @@ export class PointsComponent implements OnInit {
         return 0;
       }
     }
+  }
+  changeTips(index: number) {
+    this.indexTips += index;
+    this.getLastTips(this.matchWeeksTipped[this.indexTips]);
+  }
+  getToCurrentMatchDay() {
+    this.getLastTips(this.matchWeeksTipped[0]);
+    this.indexTips = 0;
   }
 }

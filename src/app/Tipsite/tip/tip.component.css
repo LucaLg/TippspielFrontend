@@ -1,5 +1,4 @@
-.tip-container{
-
+.tip-container {
   display: inline-grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
   justify-items: center;
@@ -12,12 +11,11 @@
   font-weight: bolder;
   background-color: #e0e0e0;
 
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
 }
-.cont{
-
-
+.cont {
   align-items: center;
   justify-items: center;
   margin-top: 0.8em;
@@ -36,21 +34,21 @@
   box-shadow: none;
   border: none;
   text-align: center;
+  outline: none;
 }
-.name{
+.name {
   align-self: center;
   text-align: center;
 }
-img{
+img {
   align-self: center;
   text-align: center;
   max-height: 2em;
   max-width: 2em;
 }
-button{
-  margin-top:3em;
+button {
+  margin-top: 3em;
   margin-left: 7%;
-
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -58,13 +56,12 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
-@media (max-width:800px) {
-  .cont{
-
+@media (max-width: 800px) {
+  .cont {
     grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
   }
 
-  .tip-container{
+  .tip-container {
     width: 11em;
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
@@ -72,11 +69,8 @@ input::-webkit-inner-spin-button {
     display: none;
   }
 }
-@media (min-width:1400px) {
-  .cont{
-
+@media (min-width: 1400px) {
+  .cont {
     grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));
   }
-
-
 }

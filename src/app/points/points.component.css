@@ -1,11 +1,30 @@
-table {
-  width: 100%;
-
-}
 .mat-row {
   height: auto;
 }
-
+table {
+  margin: 0 auto;
+  text-align: center;
+}
+.mat-header-cell {
+  padding: 1rem 1rem 1.5rem 1.5rem;
+}
 .mat-cell {
-  padding: 8px 8px 8px 0;
+  padding: 1rem 1rem 1.5rem 1.5rem;
+}
+.matchDayPaginator {
+  display: flex;
+  margin-top: 1rem;
+
+  justify-content: center;
+}
+.matchDayPaginator > * {
+  margin: 0 1rem;
+}
+.matchDayPaginator > span {
+  font-size: larger;
+  display: inline-flex;
+  align-items: center;
+}
+.container {
+  display: flex;
 }
