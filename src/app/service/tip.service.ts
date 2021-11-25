@@ -39,18 +39,15 @@ export class TipService {
       URL + '/tips/' + this.userBackendService.loggedInUser
     );
   }
-  getTipByMatchIdAndUsername(matchId: number) {
-    return this.http.get<ITip>(
-      URL + '/tips/' + matchId + '/' + this.userBackendService.loggedInUser
-    );
+  getTipByMatchIdAndUsername(matchId: number, username: string) {
+    return this.http.get<ITip>(URL + '/tips/' + matchId + '/' + username);
   }
-  getTipsByMatchWeek(matchweekId: number) {
+  getTipsByMatchWeek(
+    matchweekId: number,
+    username: string
+  ): Observable<ITip[]> {
     return this.http.get<ITip[]>(
-      URL +
-        '/tips/matchweek/' +
-        this.userBackendService.loggedInUser +
-        '/' +
-        matchweekId
+      URL + '/tips/matchweek/' + username + '/' + matchweekId
     );
   }
   getLastTips(username: String) {

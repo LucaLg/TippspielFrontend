@@ -61,18 +61,20 @@ export class TipComponent implements OnInit {
       this.tipService.getAllMatchweeks().subscribe((matchweeks) => {
         if (matchweeks.includes(this.tips[0].matchDayID)) {
           this.tips.forEach((tip) => {
-            this.tipService.getTipByMatchIdAndUsername(tip.matchId).subscribe(
-              (res) => {
-                //console.log(res);
-                if (res != null) {
-                  tip.tipHomeScore = res.tipHomeScore;
-                  tip.tipAwayScore = res.tipAwayScore;
+            this.tipService
+              .getTipByMatchIdAndUsername(tip.matchId, this.username)
+              .subscribe(
+                (res) => {
+                  //console.log(res);
+                  if (res != null) {
+                    tip.tipHomeScore = res.tipHomeScore;
+                    tip.tipAwayScore = res.tipAwayScore;
+                  }
+                },
+                (error) => {
+                  console.log('Tips not found!');
                 }
-              },
-              (error) => {
-                console.log('Tips not found!');
-              }
-            );
+              );
           });
         }
       });

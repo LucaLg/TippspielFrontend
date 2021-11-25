@@ -2,7 +2,6 @@
   height: auto;
 }
 table {
-  margin: 0 auto;
   text-align: center;
 }
 .mat-header-cell {
@@ -27,4 +26,36 @@ table {
 }
 .container {
   display: flex;
+
+  justify-content: center;
+}
+.userList {
+  margin: 0 0;
+  list-style: none;
+  background-color: #424242;
+  padding: 0;
+}
+.userList > li {
+  text-align: center;
+  padding: 1rem 1rem 1.5rem 1.5rem;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+.header {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+}
+.tipp {
+  width: 1rem;
+}
+.points {
+  width: 1rem;
+  text-align: right;
+}
+.userDiv {
+  display: flex;
+  margin: 0 0;
+  padding: 0 0;
 }

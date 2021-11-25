@@ -1,33 +1,41 @@
 <div class="container">
-  <table mat-table [dataSource]="lastTips" *ngIf="loaded && !noTipsToDisplay">
+  <table mat-table [dataSource]="loadedFixtures">
     <ng-container matColumnDef="hometeam">
       <th mat-header-cell *matHeaderCellDef>Home Team</th>
-      <td mat-cell *matCellDef="let tip">{{ tip.hometeam }}</td>
+      <td mat-cell *matCellDef="let fix">{{ fix.team1.shortName }}</td>
     </ng-container>
     <ng-container matColumnDef="awayteam">
       <th mat-header-cell *matHeaderCellDef>Away Team</th>
-      <td mat-cell *matCellDef="let tip">{{ tip.awayteam }}</td>
-    </ng-container>
-    <ng-container matColumnDef="tipp">
-      <th mat-header-cell *matHeaderCellDef>Tipp</th>
-      <td mat-cell *matCellDef="let tip">
-        {{ tip.tipHomeScore }}:{{ tip.tipAwayScore }}
-      </td>
+      <td mat-cell *matCellDef="let fix">{{ fix.team2.shortName }}</td>
     </ng-container>
     <ng-container matColumnDef="act">
       <th mat-header-cell *matHeaderCellDef>Score</th>
-      <td mat-cell *matCellDef="let tip">
-        {{ tip.actHomeScore }}:{{ tip.actAwayScore }}
+      <td mat-cell *matCellDef="let fix">
+        <span *ngIf="fix.matchResults[0]">
+          {{ fix.matchResults[0]?.pointsTeam1 }}:{{
+            fix.matchResults[0]?.pointsTeam2
+          }}</span
+        >
+        <span *ngIf="!fix.matchResults[0]">-:-</span>
       </td>
     </ng-container>
-    <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef>Points</th>
-      <td mat-cell *matCellDef="let tip">{{ tip.points }}</td>
-      <td mat-cell *matCellDef="let tip">{{ sumPoints }}</td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedCols"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedCols"></tr>
   </table>
+  <div class="userDiv" *ngFor="let user of tipps | keyvalue">
+    <ul class="userList" *ngFor="let map of user.value | keyvalue">
+      <li class="header">{{ user.key }} Tipps</li>
+      <li *ngFor="let tip of map.value">
+        {{ tip.tipHomeScore }}:{{ tip.tipAwayScore }}
+      </li>
+    </ul>
+    <ul class="userList" *ngFor="let map of user.value | keyvalue">
+      <li class="header">{{ user.key }} Points</li>
+      <li *ngFor="let tip of map.value">
+        {{ tip.points }}
+      </li>
+    </ul>
+  </div>
 </div>
 
 <div class="error" *ngIf="noTipsToDisplay">
@@ -37,22 +45,22 @@
   <button
     mat-stroked-button
     (click)="changeTips(-1)"
-    [disabled]="this.indexTips >= this.matchWeeksTipped.length - 1"
+    [disabled]="this.loadedMatchweek == 1"
   >
     <mat-icon>navigate_before</mat-icon>
   </button>
-  <span>Aktueller Spieltag: {{ this.matchWeeksTipped[this.indexTips] }}</span>
+  <span>Aktueller Spieltag: {{ this.loadedMatchweek }}</span>
   <button
     mat-stroked-button
     (click)="changeTips(1)"
-    [disabled]="this.indexTips <= 0"
+    [disabled]="this.loadedMatchweek >= this.currentMatchweek"
   >
     <mat-icon>navigate_next</mat-icon>
   </button>
   <button
     mat-stroked-button
     (click)="getToCurrentMatchDay()"
-    [disabled]="this.indexTips == 0"
+    [disabled]="this.loadedMatchweek == this.currentMatchweek"
   >
     Current MatchDay
   </button>

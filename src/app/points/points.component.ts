@@ -5,6 +5,10 @@ import { ApiService } from '../service/api.service';
 import { ITip } from '../model/ITip';
 import { ActivatedRoute } from '@angular/router';
 import { TouchSequence } from 'selenium-webdriver';
+import { User } from 'app/model/User';
+import { Fixture } from 'app/model/Fixture';
+import { Observable } from 'rxjs';
+import { PointsService } from 'app/service/points.service';
 
 @Component({
   selector: 'app-points',
@@ -19,7 +23,7 @@ export class PointsComponent implements OnInit {
     'act',
     'points',
   ];
-  currentGroupId: number;
+  loadedMatchweek: number;
   lastTips: ITip[] = [];
   changed: boolean = false;
   loaded: boolean = false;
@@ -28,67 +32,130 @@ export class PointsComponent implements OnInit {
   displayedTips: ITip[] = [];
   noTipsToDisplay: boolean = false;
   matchWeeksTipped: number[] = [];
+
+  //Neue
+  userPoints: string[] = [];
+  loadedFixtures: Fixture[] = [];
+  displayedCols: string[] = ['hometeam', 'awayteam', 'act'];
+  userCols: string[] = ['homescore', 'awayscore'];
+  tipps: Map<string, Map<number, ITip[]>> = new Map<
+    string,
+    Map<number, ITip[]>
+  >();
+  loadedMatchDay = 0;
+  tippsLoaded = false;
+  points: number[];
+  currentMatchweek: number;
+  finishedMatchweek: boolean = false;
+  usersGiven = false;
   constructor(
     private route: ActivatedRoute,
     private tipService: TipService,
     private userBackendService: BackendUserService,
-    private apiService: ApiService
-  ) {}
+    private apiService: ApiService,
+    private pointsService: PointsService
+  ) {
+    if (userBackendService.loggedInUser != null) {
+      this.userPoints.push(userBackendService.loggedInUser);
+    }
 
-  ngOnInit(): void {
-    this.tipService.getAllMatchweeks().subscribe((matchweeks) => {
-      this.matchWeeksTipped = matchweeks;
-      console.log(this.matchWeeksTipped);
+    this.userPoints.forEach((user) => {
+      let tipMap = new Map<number, ITip[]>();
+      this.tipps.set(user, tipMap);
     });
-    this.apiService.getCurrentMatchweekID().subscribe((res) => {
-      this.currentGroupId = res.GroupID;
-
-      this.getLastTips(this.matchWeeksTipped[this.indexTips]);
-    });
+    if (this.userPoints.length > 0) {
+      this.usersGiven = true;
+    }
   }
 
-  getLastTips(matchweek: number) {
-    this.tipService.getTipsByMatchWeek(matchweek).subscribe(
-      (res) => {
-        if (res.length === 0) {
-          this.noTipsToDisplay = true;
+  ngOnInit(): void {
+    this.apiService.getCurrentMatchweekID().subscribe((res) => {
+      this.loadedMatchweek = res.GroupOrderID - 1;
+      this.currentMatchweek = this.loadedMatchweek;
+      this.loadFixtures(this.loadedMatchweek);
+    });
+  }
+  /*
+      Callt Api und holt jedes Spiel des aktuell zu ladenen Spieltags.
+      Fur jedes geladene Spiel wird bei jedem angegebenen Spieler,der dargestellt werden soll,
+      gepruft ob dieser ein Tipp fuer dieses Spiel abgegeben hat.
+      Falls ja wird fuer dieses Spiel die updateTipsInMap Methode aufgerufen.
+  */
+  loadFixtures(matchWeek: number) {
+    this.apiService.getFixturesOfMatchDay(matchWeek).subscribe(
+      (matchweek) => {
+        this.loadedFixtures = matchweek;
+        if (this.usersGiven) {
+          this.loadedFixtures.forEach((fix) => {
+            //Lade alle Tips von User
+            this.finishedMatchweek =
+              this.finishedMatchweek || fix.matchIsFinished;
+            this.userPoints.forEach((user) => {
+              this.getTipsOfUser(fix.matchID, user).subscribe(
+                (res) => {
+                  this.updateTipsInMap(res, user);
+                },
+                (error) => {
+                  console.log(error);
+                }
+              );
+            });
+          });
         }
-        this.lastTips = res;
-        this.lastTips.forEach((value) => {
-          this.noTipsToDisplay = false;
-          this.checkPoints(value);
-        });
-        console.log('Ausgeführt' + matchweek);
-        // console.log(this.lastTips);
-        this.loaded = true;
+        this.tippsLoaded = true;
+        console.log(this.tipps);
       },
       (error) => {
         console.log(error);
-        this.noTipsToDisplay = true;
       }
     );
   }
 
-  checkPoints(tip: ITip) {
-    this.apiService.getScoreOfMatchID(tip.matchId).subscribe(
-      (res) => {
-        if (res.matchIsFinished) {
-          tip.actHomeScore = res.matchResults[0].pointsTeam1;
-          tip.actAwayScore = res.matchResults[0].pointsTeam2;
+  getTipsOfUser(matchId: number, username: string): Observable<ITip> {
+    return this.tipService.getTipByMatchIdAndUsername(matchId, username);
+  }
+  /*
+  Berechnet fuer die ubergebenen Spiele und Usernamen die Punkte falls mit der ckeckPoints Methode
+  daraufhin wird die Map User Tipps befuellt die in der Liste ausgeben wird.
+  */
+  updateTipsInMap(tip: ITip, username: string) {
+    console.warn(tip);
+    tip = this.checkPoints(tip, username);
 
-          tip.points = this.calcPoints(tip);
+    if (!this.tipps.get(username).has(tip.matchDayID)) {
+      this.tipps.get(username).set(tip.matchDayID, []);
+    }
+    let isPresent =
+      this.tipps
+        .get(username)
+        .get(tip.matchDayID)
+        .filter((t) => t.matchId == tip.matchId).length > 0;
 
-          this.sumPoints = this.sumPoints + tip.points;
+    if (!isPresent) {
+      this.tipps.get(username).get(tip.matchDayID).push(tip);
+    }
+  }
 
-          this.tipService.updateTip(tip, this.userBackendService.loggedInUser);
-        } else {
-          tip.actAwayScore = '-';
-          tip.actHomeScore = '-';
-        }
-        //console.log(tip.matchId + ' ' + tip.actHomeScore + ' ' + tip.actAwayScore);
-      },
-      (errpr) => {}
-    );
+  checkPoints(tip: ITip, user: string): ITip {
+    if (tip.actHomeScore < 0 && tip.actAwayScore < 0) {
+      this.apiService.getScoreOfMatchID(tip.matchId).subscribe(
+        (res) => {
+          if (res.matchIsFinished) {
+            tip.actHomeScore = res.matchResults[0].pointsTeam1;
+            tip.actAwayScore = res.matchResults[0].pointsTeam2;
+
+            tip.points = this.calcPoints(tip);
+
+            this.sumPoints = this.sumPoints + tip.points;
+
+            this.tipService.updateTip(tip, user);
+          }
+        },
+        (errpr) => {}
+      );
+    }
+
+    return tip;
   }
 
   calcPoints(tip: ITip): number {
@@ -107,12 +174,22 @@ export class PointsComponent implements OnInit {
       }
     }
   }
+
+  /*
+  Paginator Navigation Functions
+  */
   changeTips(index: number) {
     this.indexTips += index;
-    this.getLastTips(this.matchWeeksTipped[this.indexTips]);
+    this.loadedMatchweek += index;
+
+    // this.getLastTips(this.matchWeeksTipped[this.indexTips]);
+    for (let [key, value] of this.tipps) {
+      value.clear();
+    }
+    this.loadFixtures(this.loadedMatchweek);
   }
   getToCurrentMatchDay() {
-    this.getLastTips(this.matchWeeksTipped[0]);
-    this.indexTips = 0;
+    this.loadedMatchweek = this.currentMatchweek;
+    this.loadFixtures(this.currentMatchweek);
   }
 }
