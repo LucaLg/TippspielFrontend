@@ -5,7 +5,7 @@ import { ApiService } from '../service/api.service';
 import { ITip } from '../model/ITip';
 import { ActivatedRoute } from '@angular/router';
 import { TouchSequence } from 'selenium-webdriver';
-import { User } from 'app/model/User';
+import { IUser as User } from 'app/model/IUser';
 import { Fixture } from 'app/model/Fixture';
 import { Observable } from 'rxjs';
 import { PointsService } from 'app/service/points.service';
@@ -55,8 +55,13 @@ export class PointsComponent implements OnInit {
     private apiService: ApiService,
     private pointsService: PointsService
   ) {
-    if (userBackendService.loggedInUser != null) {
-      this.userPoints.push(userBackendService.loggedInUser);
+    if (this.route.snapshot.queryParamMap.get('user')) {
+      this.userPoints.push(this.route.snapshot.queryParamMap.get('user'));
+    }
+    if (this.route.snapshot.queryParamMap.get('ArrayUsers')) {
+      this.userPoints = JSON.parse(
+        this.route.snapshot.queryParamMap.get('ArrayUsers')
+      );
     }
 
     this.userPoints.forEach((user) => {
@@ -70,7 +75,7 @@ export class PointsComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getCurrentMatchweekID().subscribe((res) => {
-      this.loadedMatchweek = res.GroupOrderID - 1;
+      this.loadedMatchweek = res.GroupOrderID;
       this.currentMatchweek = this.loadedMatchweek;
       this.loadFixtures(this.loadedMatchweek);
     });
@@ -96,17 +101,16 @@ export class PointsComponent implements OnInit {
                   this.updateTipsInMap(res, user);
                 },
                 (error) => {
-                  console.log(error);
+                  console.log(error.message);
                 }
               );
             });
           });
         }
         this.tippsLoaded = true;
-        console.log(this.tipps);
       },
       (error) => {
-        console.log(error);
+        console.log(error.message);
       }
     );
   }
@@ -119,7 +123,6 @@ export class PointsComponent implements OnInit {
   daraufhin wird die Map User Tipps befuellt die in der Liste ausgeben wird.
   */
   updateTipsInMap(tip: ITip, username: string) {
-    console.warn(tip);
     tip = this.checkPoints(tip, username);
 
     if (!this.tipps.get(username).has(tip.matchDayID)) {
@@ -137,23 +140,21 @@ export class PointsComponent implements OnInit {
   }
 
   checkPoints(tip: ITip, user: string): ITip {
-    if (tip.actHomeScore < 0 && tip.actAwayScore < 0) {
-      this.apiService.getScoreOfMatchID(tip.matchId).subscribe(
-        (res) => {
-          if (res.matchIsFinished) {
-            tip.actHomeScore = res.matchResults[0].pointsTeam1;
-            tip.actAwayScore = res.matchResults[0].pointsTeam2;
+    this.apiService.getScoreOfMatchID(tip.matchId).subscribe(
+      (res) => {
+        if (res.matchIsFinished) {
+          tip.actHomeScore = res.matchResults[0].pointsTeam1;
+          tip.actAwayScore = res.matchResults[0].pointsTeam2;
 
-            tip.points = this.calcPoints(tip);
+          tip.points = this.calcPoints(tip);
 
-            this.sumPoints = this.sumPoints + tip.points;
+          this.sumPoints = this.sumPoints + tip.points;
 
-            this.tipService.updateTip(tip, user);
-          }
-        },
-        (errpr) => {}
-      );
-    }
+          this.tipService.updateTip(tip, user);
+        }
+      },
+      (errpr) => {}
+    );
 
     return tip;
   }

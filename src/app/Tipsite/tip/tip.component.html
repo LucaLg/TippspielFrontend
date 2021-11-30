@@ -23,4 +23,6 @@
   >
     Speichern
   </button>
+  <div class="error" *ngIf="!this.allTipsTipped">{{ this.feedback }}</div>
+  <div class="success" *ngIf="this.allTipsTipped">{{ this.feedback }}</div>
 </div>

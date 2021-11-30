@@ -25,10 +25,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserButtonComponent } from './nav/user-button/user-button.component';
 import { JwtModule } from '@auth0/angular-jwt';
+import { GroupDetailsComponent } from './group/group-details/group-details.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'tip', component: TipComponent },
   { path: 'group', component: GroupListComponent },
+  { path: 'group-details', component: GroupDetailsComponent },
   { path: 'newGroup', component: NewGroupComponent },
   {
     path: 'points',
@@ -53,6 +55,7 @@ export function tokenGetter() {
     NewGroupComponent,
     PointsComponent,
     UserButtonComponent,
+    GroupDetailsComponent,
   ],
   imports: [
     BrowserModule,

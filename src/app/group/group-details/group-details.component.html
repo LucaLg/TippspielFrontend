@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="users">
+    <h3>User | Points</h3>
+    <div class="user" *ngFor="let user of users">
+      {{ user.username }} | {{ user.points[0] }}
+    </div>
+  </div>
+
+  <app-points></app-points>
+</div>

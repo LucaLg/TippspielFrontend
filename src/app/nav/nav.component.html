@@ -1,22 +1,30 @@
 <div class="container sidenav">
   <mat-nav-list>
     <mat-list-item class="sidenav-brand" routerLink="tip">
-      <h1>TP</h1>
+      <h1>{{ this.heading }}</h1>
     </mat-list-item>
     <mat-list-item routerLink="tip">
-      <a><mat-icon>post_add</mat-icon></a>
+      <a><mat-icon>post_add</mat-icon></a
+      ><span class="label">Tippen</span>
     </mat-list-item>
-    <mat-list-item routerLink="points">
-      <a><mat-icon>table_chart</mat-icon></a>
+    <mat-list-item
+      [routerLink]="['points']"
+      [queryParams]="{ user: loggedInUser }"
+      [disabled]="!loggedInUser"
+    >
+      <a><mat-icon>table_chart</mat-icon></a
+      ><span class="label">Punkte</span>
     </mat-list-item>
     <mat-list-item routerLink="group">
-      <a><mat-icon>groups</mat-icon></a>
+      <a><mat-icon>groups</mat-icon> </a><span class="label">Gruppen</span>
     </mat-list-item>
-    <mat-list-item routerLink="login" *ngIf="!this.tokenService.hasToken">
-      <a><mat-icon>login</mat-icon></a>
+    <mat-list-item routerLink="login" *ngIf="!loggedInUser">
+      <a><mat-icon>login</mat-icon></a
+      ><span class="label">Login</span>
     </mat-list-item>
-    <mat-list-item *ngIf="this.tokenService.hasToken">
-      <a (click)="logout()"><mat-icon>logout</mat-icon></a>
+    <mat-list-item *ngIf="loggedInUser" (click)="logout()">
+      <a><mat-icon>logout</mat-icon></a
+      ><span class="label">Logout</span>
     </mat-list-item>
   </mat-nav-list>
 </div>

@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import validate = WebAssembly.validate;
 import { BackendUserService } from '../../service/backend-user.service';
-import { User } from '../../model/User';
+import { IUser as User } from '../../model/IUser';
 import { HttpHeaders } from '@angular/common/http';
 import { TokenService } from '../../service/token.service';
 import { Router } from '@angular/router';

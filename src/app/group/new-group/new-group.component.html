@@ -1,12 +1,48 @@
-<form [formGroup]="groupform">
-  <label for="groupName">Group Name</label>
-  <input type="text" name="groupName" id="groupName" formControlName="groupName">
-  <label for="username">User to add:</label>
-  <input type="text" name="username" id="username" formControlName="username">
-  <button class="btn btn-primary">Add</button>
+<div class="container">
+  <form [formGroup]="groupform">
+    <mat-form-field color="primary" appearance="fill">
+      <mat-label>Group Name</mat-label>
+      <input
+        matInput
+        type="text"
+        name="groupName"
+        id="groupName"
+        formControlName="groupName"
+      />
+      <mat-error
+        *ngIf="
+          groupform.get('groupName').touched &&
+          groupform.get('groupName').invalid
+        "
+        >Name darf nicht leer sein!</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field color="primary" appearance="fill">
+      <mat-label>Add User</mat-label>
+      <input
+        matInput
+        type="text"
+        name="username"
+        id="username"
+        formControlName="username"
+      />
+    </mat-form-field>
+    <div class="buttons">
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="addUser()"
+      >
+        Add
+      </button>
+      <button mat-raised-button color="accent" type="button" (click)="onSave()">
+        Save
+      </button>
+    </div>
+  </form>
   <ul>
-    <li *ngFor="let username of groupUserList">{{username}}
-    </li>
+    <li *ngFor="let username of groupUserList">{{ username }}</li>
   </ul>
-  <button class="btn btn-dark"  >Save</button>
-</form>
+</div>

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BackendUserService } from './backend-user.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { User } from 'app/model/User';
+import { IUser as User } from 'app/model/IUser';
+import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class TokenService {
-  hasToken: boolean = false;
+  hasToken = new Subject<boolean>();
   token: string;
   constructor(
     private userBackendService: BackendUserService,
@@ -35,8 +36,7 @@ export class TokenService {
           } else {
             this.userBackendService.loggedInUser =
               localStorage.getItem('Username');
-            console.log('find user');
-            this.hasToken = true;
+            this.hasToken.next(true);
           }
         });
     }
@@ -46,12 +46,12 @@ export class TokenService {
     this.token = token;
     localStorage.setItem('Access_Token', 'Bearer ' + token);
     localStorage.setItem('Username', username);
-    this.hasToken = true;
+    this.hasToken.next(true);
   }
 
   deleteToken() {
     localStorage.removeItem('Username');
     localStorage.removeItem('Access_Token');
-    this.hasToken = false;
+    this.hasToken.next(false);
   }
 }

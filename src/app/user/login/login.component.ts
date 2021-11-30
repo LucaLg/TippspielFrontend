@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BackendUserService } from '../../service/backend-user.service';
 import { TokenService } from '../../service/token.service';
-import { User } from '../../model/User';
+import { IUser as User } from '../../model/IUser';
 import { Router } from '@angular/router';
 
 @Component({

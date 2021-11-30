@@ -14,11 +14,12 @@ import { TipService } from '../../service/tip.service';
   styleUrls: ['./tip.component.css'],
 })
 export class TipComponent implements OnInit {
-  allTipsTipped = false;
+  allTipsTipped = true;
   fixtures: Fixture[];
   tips: ITip[] = [];
   username: string;
   tipTime: boolean = false;
+  feedback: string = '';
   constructor(
     private apiService: ApiService,
     private userBackendService: BackendUserService,
@@ -81,22 +82,21 @@ export class TipComponent implements OnInit {
     }
   }
 
-  canSave(): boolean {
-    this.tips.forEach((tip) => {
-      if (tip.tipAwayScore == null || tip.tipHomeScore == null) {
-        return false;
-      }
-    });
-    return true;
-  }
-
   save() {
-    this.allTipsTipped = this.canSave();
-    if (!this.allTipsTipped) {
-      alert('Tippe alle Spiele');
-      return;
+    for (let tip of this.tips) {
+      if (
+        tip.tipAwayScore == null ||
+        tip.tipAwayScore < 0 ||
+        tip.tipHomeScore < 0 ||
+        tip.tipHomeScore == null
+      ) {
+        this.allTipsTipped = false;
+        this.feedback = 'Tipps nicht korrekt oder nicht alle Spiele getippt!';
+        return;
+      }
     }
-
+    this.feedback = 'Tipps gespeichert!';
+    this.allTipsTipped = true;
     this.tipService.saveTips(this.tips);
   }
 }

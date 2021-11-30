@@ -18,10 +18,10 @@
 .cont {
   align-items: center;
   justify-items: center;
-  margin-top: 0.8em;
+
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(25em, 1fr));
-  row-gap: 3em;
+  row-gap: 2em;
   flex-wrap: wrap;
 }
 
@@ -49,6 +49,16 @@ img {
 button {
   margin-top: 3em;
   margin-left: 7%;
+}
+.error {
+  color: tomato;
+  font-size: larger;
+  font-weight: bolder;
+}
+.success {
+  color: mediumspringgreen;
+  font-size: larger;
+  font-weight: bolder;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

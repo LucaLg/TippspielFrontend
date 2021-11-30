@@ -1,9 +1,21 @@
 <div class="container">
-  <label>
-    <input type="text" class="searchGroup">
-  </label>
-  <button routerLink="newGroup" class="btn btn-dark">Add Group</button>
+  <div class="heading">
+    <h2>Groups</h2>
+    <button routerLink="../newGroup" mat-icon-button>
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <mat-form-field>
+    <mat-label>Group Name</mat-label>
+    <input matInput type="text" name="groupName" id="groupName" />
+  </mat-form-field>
+
   <ul class="groupList">
-    <li *ngFor="let group of groupList ">{{group.name}}</li>
+    <li *ngFor="let group of groupList">
+      <span (click)="onGroupClick(group)">{{ group.name }}</span>
+      <button mat-icon-button (click)="deleteGroup(group)">
+        <mat-icon>remove</mat-icon>
+      </button>
+    </li>
   </ul>
 </div>

@@ -5,7 +5,7 @@ import {
   HttpParameterCodec,
   HttpParams,
 } from '@angular/common/http';
-import { User } from '../model/User';
+import { IUser, IUser as User } from '../model/IUser';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { IToken } from '../model/IToken';
@@ -52,10 +52,10 @@ export class BackendUserService {
     );
   }
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(URL + '/user');
+    return this.http.get<IUser[]>(URL + '/user');
   }
   getUserByUsername(username: string): Observable<User> {
-    return this.http.get<User>(URL + '/name/' + username);
+    return this.http.get<IUser>(URL + '/user/name/' + username);
   }
   isUserPresent(username: string) {
     return this.http.get(URL + '/user/present/' + username);

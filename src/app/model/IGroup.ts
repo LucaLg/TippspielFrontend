@@ -1,6 +1,7 @@
-import {User} from './User';
+import { IUser as User } from './IUser';
 
-export interface IGroup{
-    name:string;
-    users:User[];
+export interface IGroup {
+  id?: number;
+  name: string;
+  users: string[];
 }
