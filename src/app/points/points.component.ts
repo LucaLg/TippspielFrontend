@@ -48,6 +48,8 @@ export class PointsComponent implements OnInit {
   currentMatchweek: number;
   finishedMatchweek: boolean = false;
   usersGiven = false;
+  errorMessage =
+    ' Nicht alle Spieler haben Tipps für diesen Spieltag abgegeben!';
   constructor(
     private route: ActivatedRoute,
     private tipService: TipService,
@@ -63,7 +65,9 @@ export class PointsComponent implements OnInit {
         this.route.snapshot.queryParamMap.get('ArrayUsers')
       );
     }
-
+    if (this.userPoints.length == 1) {
+      this.errorMessage = 'Kein Tipp für diesen Spieltag abgegeben!';
+    }
     this.userPoints.forEach((user) => {
       let tipMap = new Map<number, ITip[]>();
       this.tipps.set(user, tipMap);
@@ -102,6 +106,8 @@ export class PointsComponent implements OnInit {
                 },
                 (error) => {
                   console.log(error.message);
+
+                  this.noTipsToDisplay = true;
                 }
               );
             });

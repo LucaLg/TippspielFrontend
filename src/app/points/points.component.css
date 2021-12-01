@@ -59,3 +59,7 @@ table {
   margin: 0 0;
   padding: 0 0;
 }
+.error {
+  margin-left: 35vw;
+  color: tomato;
+}
